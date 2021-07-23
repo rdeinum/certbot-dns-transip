@@ -13,7 +13,7 @@ See [this article](https://www.transip.nl/knowledgebase/artikel/77-ik-wil-transi
 ## Initialize Certbot DNS plugin configuration
 `cd` into a directory where configuration should be initialized for the obtained TransIP API key and do:
 ```bash
-$ certbot-dns-transip init <TRANSIP_USERNAME> <TRANSIP_API_KEY_FILE>
+$ certbot-dns-transip init <TRANSIP_USERNAME> <TRANSIP_API_KEY_PATH>
 ```
 
 ## Get a new certificate

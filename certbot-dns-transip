@@ -76,7 +76,7 @@ EOF
 }
 
 function main() {
-  while getopts ":Xd" opt; do
+  while getopts ":Xd:" opt; do
     case "$opt" in
       X) set -o xtrace;;
       d) TRANSIP_CONFIG_DIR="$OPTARG";;

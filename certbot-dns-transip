@@ -12,7 +12,7 @@ function certbot_init() {
   local transip_key_path="$1"; shift
   openssl rsa -in "$transip_key_path" -out "$TRANSIP_CONFIG_DIR/id_rsa"
   cat > "$TRANSIP_CONFIG_DIR/transip.ini" <<EOF
-certbot_dns_transip:dns_transip_username = $username
+certbot_dns_transip:dns_transip_username = $transip_username
 certbot_dns_transip:dns_transip_key_file = /id_rsa
 EOF
   chmod 0600 "$TRANSIP_CONFIG_DIR/transip.ini"

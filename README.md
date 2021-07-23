@@ -11,7 +11,7 @@ $ sudo install certbot-dns-transip /usr/local/bin
 See [this article](https://www.transip.nl/knowledgebase/artikel/77-ik-wil-transip-api-gebruiken/) and download the key.
 
 ## Initialize Certbot DNS plugin configuration
-Create or `cd` into a directory where configuration should be initialized for the obtained TransIP API key and do:
+`cd` into a directory where configuration should be initialized for the obtained TransIP API key and do:
 ```bash
 $ certbot-dns-transip init <TRANSIP_USERNAME> <TRANSIP_API_KEY_PATH>
 ```

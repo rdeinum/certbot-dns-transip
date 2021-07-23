@@ -35,4 +35,3 @@ $ docker exec nginx -s reload
 
 ## Links
 - Docker Hub: https://hub.docker.com/r/rdeinum/certbot-dns-transip
-- Source: https://github.com/rdeinum/certbot-dns-transip

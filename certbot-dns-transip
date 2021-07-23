@@ -1,0 +1,96 @@
+#!/bin/bash
+#
+# Certbot with TransIP DNS plugin for obtaining an SSL certificate via DNS challenge
+
+set -o errexit
+set -o pipefail
+
+TRANSIP_CONFIG_DIR="$(pwd)"
+
+function certbot_init() {
+  local transip_username="$1"; shift
+  local transip_key_path="$1"; shift
+  openssl rsa -in "$transip_key_path" -out "$TRANSIP_CONFIG_DIR/id_rsa"
+  cat > "$TRANSIP_CONFIG_DIR/transip.ini" <<EOF
+certbot_dns_transip:dns_transip_username = $username
+certbot_dns_transip:dns_transip_key_file = /id_rsa
+EOF
+  chmod 0600 "$TRANSIP_CONFIG_DIR/transip.ini"
+}
+
+function certbot_run() {
+  local command="$1"; shift
+  docker run \
+  --rm \
+  --tty \
+  --interactive \
+  --mount type=bind,src="$TRANSIP_CONFIG_DIR/transip.ini",dst=/transip.ini \
+  --mount type=bind,src="$TRANSIP_CONFIG_DIR/id_rsa",dst=/id_rsa \
+  --mount type=volume,src=letsencrypt,dst=/etc/letsencrypt \
+  rdeinum/certbot-dns-transip \
+  "$command" \
+  -a certbot-dns-transip:dns-transip \
+  --certbot-dns-transip:dns-transip-credentials /transip.ini \
+  --certbot-dns-transip:dns-transip-propagation-seconds 240 \
+  "$@"
+}
+
+function print_usage_main_run() {
+  cat <<EOF
+Usage: certbot-dns-transip run COMMAND
+  Run certbot command
+EOF
+  exit 1
+}
+
+function main_run() {
+  [ "$#" -lt 1 ] && print_usage_main_run
+  certbot_run "$@"
+}
+
+function print_usage_main_init() {
+    cat <<EOF
+Usage: certbot-dns-transip init TRANSIP_USERNAME TRANSIP_API_KEY_PATH
+  Initialize TransIP configuration files in the present working directory or in TRANSIP_CONFIG_DIR if specified
+EOF
+    exit 1
+}
+
+function main_init() {
+  [ "$#" -lt 2 ] && print_usage_main_init
+  certbot_init "$@"
+}
+
+function print_usage_main() {
+    cat <<EOF
+Usage: certbot-dns-transip [-X] [-d TRANSIP_CONFIG_DIR] COMMAND
+  Command-line for Cardano stake pool
+Available options:
+  -X                          Produce execution debug output
+  -d TRANSIP_CONFIG_DIR       Folder where transip.ini and associated id_rsa are located
+Available commands:
+  init                        Initialize TransIP configuration files
+  run                         Run certbot command
+EOF
+    exit 1
+}
+
+function main() {
+  while getopts ":Xd" opt; do
+    case "$opt" in
+      X) set -o xtrace;;
+      d) TRANSIP_CONFIG_DIR="$OPTARG";;
+      *) print_usage_main;;
+    esac
+  done
+  shift $((OPTIND - 1))
+  local command="$1"; shift || true
+  case "$command" in
+    init) main_init "$@";;
+    run) main_run "$@";;
+    *) print_usage_main;;
+  esac
+  exit 0
+}
+
+main "$@"

@@ -19,7 +19,7 @@ $ certbot-dns-transip init <TRANSIP_USERNAME> <TRANSIP_API_KEY_FILE>
 ## Get a new certificate
 All certificates and config must be persisted, so a volume named e.g. `letsencrypt` is mounted. This volume can also be monted as readonly on your webserver container e.g. nginx or apache for certificate access. Following an example for getting a new wildcard domain certifcate:
 ```bash
-$ certbot-dns-transip run certonly -d <DOMAIN_NAME> -d *.<DOMAIN_NAME>
+$ certbot-dns-transip run certonly -d <DOMAIN> -d *.<DOMAIN>
 ```
 
 ## Renew certificates
